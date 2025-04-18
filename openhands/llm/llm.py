@@ -247,6 +247,11 @@ class LLM(RetryMixin, DebugMixin):
                 )
 
             # log the entire LLM prompt
+                # Patch: For Gemini models, replace empty message content with a single space
+                if "gemini" in self.config.model.lower():
+                    for msg in messages:
+                        if isinstance(msg, dict) and ("content" in msg) and (not msg["content"]):
+                            msg["content"] = " "
             self.log_prompt(messages)
 
             # set litellm modify_params to the configured value
